@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BSU Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .pink-gradient {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .blue-gradient {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 13px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .link-btn {
+            background: none;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 13px;
+            text-align: center;
+            display: block;
+            margin-top: 15px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .link-btn:hover {
+            text-decoration: underline;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            text-align: center;
+            border: 1px solid #fcc;
+        }
+
+        .success {
+            background: #efe;
+            color: #3c3;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            text-align: center;
+            border: 1px solid #cfc;
+        }
+
+        .verification-question {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .verification-question p {
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .option-btn {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .option-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .option-btn.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .phone-input {
+            position: relative;
+        }
+
+        .phone-prefix {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            pointer-events: none;
+            font-size: 14px;
+        }
+
+        .phone-input input {
+            padding-left: 65px;
+        }
+
+        .email-input {
+            position: relative;
+        }
+
+        .email-suffix {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            pointer-events: none;
+            font-size: 12px;
+        }
+
+        .email-input input {
+            padding-right: 110px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+            
+            h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Giriş Ekranı -->
+    <div id="loginScreen" class="container">
+        <div class="logo">
+            <div class="logo-icon">🎓</div>
+        </div>
+        <h1>BSU Chat</h1>
+        <p class="subtitle">Daxil ol</p>
+        
+        <div id="loginError" class="error hidden"></div>
+        
+        <div class="input-group">
+            <label>Email</label>
+            <input type="email" id="loginEmail" placeholder="e***@bsu.edu.az">
+        </div>
+        
+        <div class="input-group">
+            <label>Şifrə</label>
+            <input type="password" id="loginPassword" placeholder="******">
+        </div>
+        
+        <button class="btn btn-primary" onclick="login()">Daxil ol</button>
+        
+        <button class="link-btn" onclick="showRegister()">Hesabın yoxdur? Qeydiyyat</button>
+        <button class="link-btn" onclick="showAdminLogin()">Admin Paneli</button>
+    </div>
+
+    <!-- Admin Giriş Ekranı -->
+    <div id="adminLoginScreen" class="container hidden pink-gradient">
+        <div class="logo">
+            <div class="logo-icon">🛡️</div>
+        </div>
+        <h1 style="color: white;">Admin Paneli</h1>
+        <p class="subtitle" style="color: rgba(255,255,255,0.9);">Daxil ol</p>
+        
+        <div id="adminLoginError" class="error hidden"></div>
+        
+        <div class="input-group">
+            <label style="color: white;">İstifadəçi adı</label>
+            <input type="text" id="adminUsername" placeholder="ursamajor">
+        </div>
+        
+        <div class="input-group">
+            <label style="color: white;">Şifrə</label>
+            <input type="password" id="adminPassword" placeholder="******">
+        </div>
+        
+        <button class="btn btn-danger" onclick="adminLogin()">Daxil ol</button>
+        
+        <button class="link-btn" style="color: white;" onclick="showLogin()">İstifadəçi girişi</button>
+    </div>
+
+    <!-- Qeydiyyat Ekranı 1 -->
+    <div id="registerScreen1" class="container hidden">
+        <div class="logo">
+            <div class="logo-icon">🎓</div>
+        </div>
+        <h1>BSU Chat</h1>
+        <p class="subtitle">Qeydiyyat - 1/2</p>
+        
+        <div id="registerError1" class="error hidden"></div>
+        
+        <div class="input-group">
+            <label>Email</label>
+            <div class="email-input">
+                <input type="text" id="registerEmail" placeholder="e123456">
+                <span class="email-suffix">@bsu.edu.az</span>
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label>Telefon nömrəsi</label>
+            <div class="phone-input">
+                <span class="phone-prefix">+994</span>
+                <input type="text" id="registerPhone" placeholder="501234567" maxlength="9">
+            </div>
+        </div>
+        
+        <div class="input-group">
+            <label>Şifrə</label>
+            <input type="password" id="registerPassword" placeholder="******">
+        </div>
+        
+        <button class="btn btn-primary" onclick="goToRegisterStep2()">Növbəti</button>
+        
+        <button class="link-btn" onclick="showLogin()">Artıq hesabın var? Daxil ol</button>
+    </div>
+
+    <!-- Qeydiyyat Ekranı 2 -->
+    <div id="registerScreen2" class="container hidden">
+        <div class="logo">
+            <div class="logo-icon">🎓</div>
+        </div>
+        <h1>BSU Chat</h1>
+        <p class="subtitle">Qeydiyyat - 2/2</p>
+        
+        <div id="registerError2" class="error hidden"></div>
+        
+        <div class="input-group">
+            <label>Ad və Soyad</label>
+            <input type="text" id="registerFullname" placeholder="Ad Soyad">
+        </div>
+        
+        <div class="input-group">
+            <label>Fakültə</label>
+            <select id="registerFaculty">
+                <option value="">Seç</option>
+                <option value="Mexanika-riyaziyyat fakültəsi">Mexanika-riyaziyyat fakültəsi</option>
+                <option value="Tətbiqi riyaziyyat və kibernetika fakültəsi">Tətbiqi riyaziyyat və kibernetika fakültəsi</option>
+                <option value="Fizika fakültəsi">Fizika fakültəsi</option>
+                <option value="Kimya fakültəsi">Kimya fakültəsi</option>
+                <option value="Biologiya fakültəsi">Biologiya fakültəsi</option>
+                <option value="Ekologiya və torpaqşünaslıq fakültəsi">Ekologiya və torpaqşünaslıq fakültəsi</option>
+                <option value="Coğrafiya fakültəsi">Coğrafiya fakültəsi</option>
+                <option value="Geologiya fakültəsi">Geologiya fakültəsi</option>
+                <option value="Filologiya fakültəsi">Filologiya fakültəsi</option>
+                <option value="Tarix fakültəsi">Tarix fakültəsi</option>
+                <option value="Beynəlxalq münasibətlər və iqtisadiyyat fakültəsi">Beynəlxalq münasibətlər və iqtisadiyyat fakültəsi</option>
+                <option value="Hüquq fakültəsi">Hüquq fakültəsi</option>
+                <option value="Jurnalistika fakültəsi">Jurnalistika fakültəsi</option>
+                <option value="İnformasiya və sənəd menecmenti fakültəsi">İnformasiya və sənəd menecmenti fakültəsi</option>
+                <option value="Şərqşünaslıq fakültəsi">Şərqşünaslıq fakültəsi</option>
+                <option value="Sosial elmlər və psixologiya fakültəsi">Sosial elmlər və psixologiya fakültəsi</option>
+            </select>
+        </div>
+        
+        <div class="input-group">
+            <label>Dərəcə</label>
+            <select id="registerDegree">
+                <option value="">Seç</option>
+                <option value="Bakalavr">Bakalavr</option>
+                <option value="Magistr">Magistr</option>
+                <option value="Doktorantura">Doktorantura</option>
+            </select>
+        </div>
+        
+        <div class="input-group">
+            <label>Kurs</label>
+            <select id="registerCourse">
+                <option value="">Seç</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+            </select>
+        </div>
+        
+        <button class="btn btn-primary" onclick="goToVerification()">Növbəti</button>
+        <button class="btn btn-secondary" onclick="backToRegisterStep1()">Geri</button>
+    </div>
+
+    <!-- Doğrulama Ekranı -->
+    <div id="verificationScreen" class="container hidden">
+        <div class="logo">
+            <div class="logo-icon">🎓</div>
+        </div>
+        <h1>Doğrulama</h1>
+        <p class="subtitle">Aşağıdakı suallardan minimum 2-ni düzgün cavablamalısınız</p>
+        
+        <div id="verificationError" class="error hidden"></div>
+        
+        <div id="verificationQuestions"></div>
+        
+        <button class="btn btn-primary" onclick="completeRegistration()">Qeydiyyatı tamamla</button>
+        <button class="btn btn-secondary" onclick="backToRegisterStep2()">Geri</button>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

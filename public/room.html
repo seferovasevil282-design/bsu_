@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BSU Chat - Otaq</title>
+    <link rel="stylesheet" href="room-styles.css">
+</head>
+<body>
+    <div class="chat-container">
+        <!-- Sol panel - İstifadəçilər -->
+        <div class="users-panel">
+            <div class="panel-header">
+                <h3>👥 İstifadəçilər</h3>
+            </div>
+            <div class="users-list" id="usersList"></div>
+        </div>
+
+        <!-- Əsas chat bölməsi -->
+        <div class="chat-main">
+            <div class="chat-header">
+                <div class="header-left">
+                    <button class="btn-back" onclick="goBack()">←</button>
+                    <div>
+                        <h2 id="facultyName"></h2>
+                        <p class="online-count" id="onlineCount">0 nəfər onlayn</p>
+                    </div>
+                </div>
+                <div class="daily-topic-mini" id="dailyTopicMini">⭐ Gün mövzusu</div>
+            </div>
+
+            <div class="messages-container" id="messagesContainer">
+                <div id="messagesList"></div>
+            </div>
+
+            <div class="message-input-container">
+                <textarea 
+                    id="messageInput" 
+                    placeholder="Mesajınızı yazın..." 
+                    rows="1"
+                    onkeypress="handleKeyPress(event)"
+                ></textarea>
+                <button class="btn-send" onclick="sendMessage()">
+                    <span class="send-icon">📤</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- İstifadəçi Məlumatları Modal -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">İstifadəçi Məlumatları</h2>
+                <button class="modal-close" onclick="closeUserModal()">&times;</button>
+            </div>
+            
+            <div class="user-profile">
+                <div class="user-profile-picture" id="modalUserPicture"></div>
+                <h3 id="modalUserName"></h3>
+                <p id="modalUserInfo"></p>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="openPrivateChat()">💬 Şəxsi mesaj</button>
+                <button class="btn btn-warning" onclick="blockUser()">🚫 Əngəllə</button>
+                <button class="btn btn-danger" onclick="reportUser()">⚠️ Şikayət et</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Şəxsi Chat Modal -->
+    <div class="modal" id="privateChatModal">
+        <div class="modal-content private-chat-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="privateChatTitle"></h2>
+                <button class="modal-close" onclick="closePrivateChat()">&times;</button>
+            </div>
+            
+            <div class="private-messages-container" id="privateMessagesContainer">
+                <div id="privateMessagesList"></div>
+            </div>
+
+            <div class="message-input-container">
+                <textarea 
+                    id="privateMessageInput" 
+                    placeholder="Şəxsi mesajınızı yazın..." 
+                    rows="1"
+                    onkeypress="handlePrivateKeyPress(event)"
+                ></textarea>
+                <button class="btn-send" onclick="sendPrivateMessage()">
+                    <span class="send-icon">📤</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="room.js"></script>
+</body>
+</html>
