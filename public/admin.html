@@ -40,7 +40,6 @@
     <div class="header">
         <h1>🛡️ Admin Panel</h1>
         <div>
-            <span id="adminName" style="margin-right: 20px; font-weight: 600;"></span>
             <button class="btn btn-logout" onclick="logout()">Çıxış</button>
         </div>
     </div>
@@ -175,8 +174,6 @@
     <script>
         const currentAdmin = JSON.parse(localStorage.getItem('currentAdmin'));
         if (!currentAdmin) window.location.href = '/';
-
-        document.getElementById('adminName').textContent = currentAdmin.username;
 
         // Super admin check
         if (!currentAdmin.is_super_admin) {

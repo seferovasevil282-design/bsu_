@@ -71,18 +71,46 @@ Server http://localhost:3000 ünvanında işə düşəcək.
 **Repo**: https://github.com/seferovasevil282-design/bsu_
 
 ### Render.com Deployment:
-1. Render.com hesabı yaradın
-2. GitHub repository bağlayın: `https://github.com/seferovasevil282-design/bsu_`
-3. Build Command: `npm install`
-4. Start Command: `npm start`
-5. Environment variables: `PORT=10000` (və ya Render avtomatik təyin edər)
-6. Deploy edin
 
-**Render üçün Əlavə Qeyd:**
-- Render.com-da deploy edərkən `PORT` environment variable istifadə ediləcək
-- SQLite database avtomatik yaradılacaq
-- Uploads qovluğu avtomatik yaradılacaq
-- İlk deploy 2-3 dəqiqə çəkə bilər
+**Addım-addım təlimat:**
+
+1. **Render.com hesabı yaradın**: https://render.com
+2. **Dashboard-a gedin** və **"New +"** düyməsinə basın
+3. **"Web Service"** seçin
+4. **Connect GitHub repository**:
+   - Repository: `https://github.com/seferovasevil282-design/bsu_`
+   - Branch: `main`
+5. **Service konfiqurasiyası**:
+   - **Name**: `bsu-chat` (və ya istədiyiniz ad)
+   - **Region**: Seçin (Frankfurt tövsiyə olunur)
+   - **Branch**: `main`
+   - **Root Directory**: boş buraxın
+   - **Environment**: `Node`
+   - **Build Command**: `./build.sh`
+   - **Start Command**: `npm start`
+6. **Advanced Settings**:
+   - **Auto-Deploy**: `Yes` (avtomatik deploy üçün)
+7. **Environment Variables** (əlavə etmək lazım deyil, render.yaml konfiqurasiya edir):
+   - `NODE_ENV=production` (avtomatik)
+   - `PORT=10000` (avtomatik)
+8. **"Create Web Service"** düyməsinə basın
+9. **Deploy başlayacaq** (3-5 dəqiqə çəkəcək)
+10. **URL əldə edin**: Deploy bitdikdən sonra URL verilir (məs: https://bsu-chat.onrender.com)
+
+**Render üçün Əlavə Qeydlər:**
+- ✅ SQLite database avtomatik yaradılacaq (`data/database.db`)
+- ✅ Uploads qovluğu avtomatik yaradılacaq
+- ✅ Socket.IO real-time bağlantılar işləyəcək
+- ✅ İlk deploy 3-5 dəqiqə çəkə bilər
+- ⚠️ Free plan: 15 dəqiqə inactivity-dən sonra sleep mode (ilk request yavaş ola bilər)
+- ⚠️ Free plan: Persistent disk yoxdur, restart zamanı data silinə bilər
+- 💡 Production üçün: Paid plan və ya external database (PostgreSQL) tövsiyə olunur
+
+**Troubleshooting:**
+- Deploy uğursuz olarsa: Logs-a baxın (Render Dashboard → Logs)
+- Database error: Permissions yoxlanılsın
+- Socket.IO error: CORS konfiqurasiyası düzdür, problem yoxdur
+- Port error: Render avtomatik PORT assign edir
 
 ## 🔐 Super Admin Girişi
 - **İstifadəçi adı**: ursamajor

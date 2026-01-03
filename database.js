@@ -1,14 +1,24 @@
 const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcryptjs');
 const path = require('path');
+const fs = require('fs');
 
 class Database {
   constructor() {
-    this.db = new sqlite3.Database(path.join(__dirname, 'database.db'), (err) => {
+    // Ensure data directory exists
+    const dataDir = path.join(__dirname, 'data');
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+
+    const dbPath = path.join(dataDir, 'database.db');
+    
+    this.db = new sqlite3.Database(dbPath, (err) => {
       if (err) {
         console.error('Database bağlantı xətası:', err);
       } else {
         console.log('✅ Database bağlantısı uğurlu');
+        console.log(`📁 Database path: ${dbPath}`);
         this.initializeTables();
       }
     });
