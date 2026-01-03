@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BSU Chat - Admin Panel</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); min-height: 100vh; padding: 20px; }
+        .header { background: white; padding: 20px; border-radius: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2); }
+        .header h1 { font-size: 28px; color: #333; }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s; }
+        .btn-logout { background: #dc3545; color: white; }
+        .tabs { background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2); }
+        .tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab-btn { padding: 12px 24px; border: none; background: #f8f9fa; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.3s; }
+        .tab-btn.active { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); }
+        .stat-number { font-size: 32px; font-weight: 700; margin-bottom: 5px; }
+        .stat-label { font-size: 14px; opacity: 0.9; }
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; margin-bottom: 8px; color: #555; font-size: 14px; font-weight: 500; }
+        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 10px; font-size: 14px; background: #f8f9fa; }
+        .input-group textarea { resize: vertical; min-height: 120px; }
+        .btn-primary { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; }
+        .btn-secondary { background: #6c757d; color: white; margin-left: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        table th, table td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        table th { background: #f8f9fa; font-weight: 600; color: #333; }
+        table tr:hover { background: #f8f9fa; }
+        .status-active { color: #28a745; font-weight: 600; }
+        .status-inactive { color: #dc3545; font-weight: 600; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🛡️ Admin Panel</h1>
+        <div>
+            <span id="adminName" style="margin-right: 20px; font-weight: 600;"></span>
+            <button class="btn btn-logout" onclick="logout()">Çıxış</button>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-number" id="totalUsers">0</div>
+            <div class="stat-label">Ümumi istifadəçi</div>
+        </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+            <div class="stat-number" id="activeUsers">0</div>
+            <div class="stat-label">Aktiv istifadəçi</div>
+        </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+            <div class="stat-number" id="reportedUsers">0</div>
+            <div class="stat-label">Şikayət edilən</div>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="showTab('users')">İstifadəçilər</button>
+            <button class="tab-btn" onclick="showTab('rules')">Qaydalar</button>
+            <button class="tab-btn" onclick="showTab('topic')">Günün Mövzusu</button>
+            <button class="tab-btn" onclick="showTab('filter')">Filtr Sözləri</button>
+            <button class="tab-btn" onclick="showTab('reported')">Şikayətlər</button>
+            <button class="tab-btn" onclick="showTab('config')">Konfiqurasiya</button>
+            <button class="tab-btn" id="subAdminsTab" onclick="showTab('subadmins')">Alt Adminlər</button>
+        </div>
+
+        <div id="usersTab" class="tab-content active">
+            <h3>İstifadəçi İdarəetməsi</h3>
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Ad Soyad</th>
+                        <th>Email</th>
+                        <th>Telefon</th>
+                        <th>Fakültə</th>
+                        <th>Status</th>
+                        <th>Əməliyyat</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div id="rulesTab" class="tab-content">
+            <h3>Qaydaları İdarə Et</h3>
+            <div class="input-group">
+                <label>Qaydalar:</label>
+                <textarea id="rulesContent"></textarea>
+            </div>
+            <button class="btn btn-primary" onclick="updateRules()">Yadda Saxla</button>
+        </div>
+
+        <div id="topicTab" class="tab-content">
+            <h3>Günün Mövzusu</h3>
+            <div class="input-group">
+                <label>Mövzu:</label>
+                <input type="text" id="topicInput" placeholder="Günün mövzusu...">
+            </div>
+            <button class="btn btn-primary" onclick="updateTopic()">Yenilə</button>
+        </div>
+
+        <div id="filterTab" class="tab-content">
+            <h3>Filtr Sözləri</h3>
+            <div class="input-group">
+                <label>Yeni söz əlavə et:</label>
+                <input type="text" id="filterWordInput" placeholder="Filtrlənəcək söz">
+            </div>
+            <button class="btn btn-primary" onclick="addFilterWord()">Əlavə Et</button>
+            <div id="filterWordsList" style="margin-top: 20px;"></div>
+        </div>
+
+        <div id="reportedTab" class="tab-content">
+            <h3>Şikayət Edilən Hesablar (16+)</h3>
+            <table id="reportedTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Ad Soyad</th>
+                        <th>Email</th>
+                        <th>Şikayət Sayı</th>
+                        <th>Əməliyyat</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div id="configTab" class="tab-content">
+            <h3>Mesaj Konfiqurasiyası</h3>
+            <div class="input-group">
+                <label>Qrup mesajları silinmə vaxtı (saat):</label>
+                <input type="number" id="groupHours" min="1" max="720">
+            </div>
+            <div class="input-group">
+                <label>Şəxsi mesajlar silinmə vaxtı (saat):</label>
+                <input type="number" id="privateHours" min="1" max="720">
+            </div>
+            <button class="btn btn-primary" onclick="updateConfig()">Yadda Saxla</button>
+        </div>
+
+        <div id="subadminsTab" class="tab-content">
+            <h3>Alt Adminlər</h3>
+            <div class="input-group">
+                <label>İstifadəçi adı:</label>
+                <input type="text" id="subAdminUsername">
+            </div>
+            <div class="input-group">
+                <label>Şifrə:</label>
+                <input type="password" id="subAdminPassword">
+            </div>
+            <button class="btn btn-primary" onclick="addSubAdmin()">Əlavə Et</button>
+            <table id="subAdminsTable" style="margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>İstifadəçi adı</th>
+                        <th>Yaradılma tarixi</th>
+                        <th>Əməliyyat</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const currentAdmin = JSON.parse(localStorage.getItem('currentAdmin'));
+        if (!currentAdmin) window.location.href = '/';
+
+        document.getElementById('adminName').textContent = currentAdmin.username;
+
+        // Super admin check
+        if (!currentAdmin.is_super_admin) {
+            document.getElementById('subAdminsTab').style.display = 'none';
+        }
+
+        function showTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tab + 'Tab').classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Load data
+        loadUsers();
+        loadRules();
+        loadTopic();
+        loadFilterWords();
+        loadReportedUsers();
+        loadConfig();
+        if (currentAdmin.is_super_admin) loadSubAdmins();
+
+        async function loadUsers() {
+            const response = await fetch('/api/admin/users');
+            const users = await response.json();
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('activeUsers').textContent = users.filter(u => u.is_active).length;
+            
+            const tbody = document.querySelector('#usersTable tbody');
+            tbody.innerHTML = users.map(u => `
+                <tr>
+                    <td>${u.id}</td>
+                    <td>${u.fullname}</td>
+                    <td>${u.email}</td>
+                    <td>${u.phone}</td>
+                    <td>${u.faculty}</td>
+                    <td class="${u.is_active ? 'status-active' : 'status-inactive'}">${u.is_active ? 'Aktiv' : 'Deaktiv'}</td>
+                    <td>
+                        <button class="btn ${u.is_active ? 'btn-secondary' : 'btn-primary'}" 
+                                onclick="toggleUser(${u.id}, ${!u.is_active})">
+                            ${u.is_active ? 'Deaktiv et' : 'Aktiv et'}
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function toggleUser(userId, isActive) {
+            await fetch('/api/admin/toggle-user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId, isActive })
+            });
+            loadUsers();
+        }
+
+        async function loadRules() {
+            const response = await fetch('/api/rules');
+            const data = await response.json();
+            document.getElementById('rulesContent').value = data.content;
+        }
+
+        async function updateRules() {
+            const content = document.getElementById('rulesContent').value;
+            await fetch('/api/admin/update-rules', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content })
+            });
+            alert('Qaydalar yeniləndi');
+        }
+
+        async function loadTopic() {
+            const response = await fetch('/api/daily-topic');
+            const data = await response.json();
+            document.getElementById('topicInput').value = data.topic;
+        }
+
+        async function updateTopic() {
+            const topic = document.getElementById('topicInput').value;
+            await fetch('/api/admin/update-daily-topic', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ topic })
+            });
+            alert('Günün mövzusu yeniləndi');
+        }
+
+        async function loadFilterWords() {
+            const response = await fetch('/api/filter-words');
+            const words = await response.json();
+            const list = document.getElementById('filterWordsList');
+            list.innerHTML = words.map(w => `
+                <div style="background: #f8f9fa; padding: 10px; margin: 5px 0; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <span>${w}</span>
+                    <button class="btn btn-secondary" onclick="removeFilterWord('${w}')">Sil</button>
+                </div>
+            `).join('');
+        }
+
+        async function addFilterWord() {
+            const word = document.getElementById('filterWordInput').value.trim();
+            if (!word) return;
+            await fetch('/api/admin/add-filter-word', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ word })
+            });
+            document.getElementById('filterWordInput').value = '';
+            loadFilterWords();
+        }
+
+        async function removeFilterWord(word) {
+            await fetch('/api/admin/remove-filter-word', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ word })
+            });
+            loadFilterWords();
+        }
+
+        async function loadReportedUsers() {
+            const response = await fetch('/api/admin/reported-users');
+            const users = await response.json();
+            document.getElementById('reportedUsers').textContent = users.length;
+            
+            const tbody = document.querySelector('#reportedTable tbody');
+            tbody.innerHTML = users.map(u => `
+                <tr>
+                    <td>${u.id}</td>
+                    <td>${u.fullname}</td>
+                    <td>${u.email}</td>
+                    <td><strong>${u.report_count}</strong></td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="toggleUser(${u.id}, false)">Deaktiv et</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadConfig() {
+            const response = await fetch('/api/admin/message-config');
+            const config = await response.json();
+            document.getElementById('groupHours').value = config.group_message_hours;
+            document.getElementById('privateHours').value = config.private_message_hours;
+        }
+
+        async function updateConfig() {
+            const groupMessageHours = parseInt(document.getElementById('groupHours').value);
+            const privateMessageHours = parseInt(document.getElementById('privateHours').value);
+            await fetch('/api/admin/update-message-config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ groupMessageHours, privateMessageHours })
+            });
+            alert('Konfiqurasiya yeniləndi');
+        }
+
+        async function loadSubAdmins() {
+            const response = await fetch('/api/admin/sub-admins');
+            const admins = await response.json();
+            const tbody = document.querySelector('#subAdminsTable tbody');
+            tbody.innerHTML = admins.map(a => `
+                <tr>
+                    <td>${a.id}</td>
+                    <td>${a.username}</td>
+                    <td>${new Date(a.created_at).toLocaleDateString('az-AZ')}</td>
+                    <td>
+                        <button class="btn btn-secondary" onclick="deleteSubAdmin(${a.id})">Sil</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        async function addSubAdmin() {
+            const username = document.getElementById('subAdminUsername').value.trim();
+            const password = document.getElementById('subAdminPassword').value;
+            if (!username || !password) {
+                alert('Bütün xanaları doldurun');
+                return;
+            }
+            await fetch('/api/admin/add-sub-admin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password, isSuperAdmin: currentAdmin.is_super_admin })
+            });
+            document.getElementById('subAdminUsername').value = '';
+            document.getElementById('subAdminPassword').value = '';
+            loadSubAdmins();
+        }
+
+        async function deleteSubAdmin(adminId) {
+            if (!confirm('Bu admini silmək istədiyinizdən əminsiniz?')) return;
+            await fetch('/api/admin/delete-sub-admin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ adminId, isSuperAdmin: currentAdmin.is_super_admin })
+            });
+            loadSubAdmins();
+        }
+
+        function logout() {
+            localStorage.removeItem('currentAdmin');
+            window.location.href = '/';
+        }
+    </script>
+</body>
+</html>
