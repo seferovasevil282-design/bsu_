@@ -64,11 +64,25 @@ npm start
 
 Server http://localhost:3000 ünvanında işə düşəcək.
 
+### 🌐 Live Demo:
+**Test URL**: https://3000-in59tzi9zsjamkowclxzl-3844e1b6.sandbox.novita.ai
+
+### 📍 GitHub Repository:
+**Repo**: https://github.com/seferovasevil282-design/bsu_
+
 ### Render.com Deployment:
 1. Render.com hesabı yaradın
-2. GitHub repository bağlayın
-3. Environment variables təyin edin
-4. Deploy edin
+2. GitHub repository bağlayın: `https://github.com/seferovasevil282-design/bsu_`
+3. Build Command: `npm install`
+4. Start Command: `npm start`
+5. Environment variables: `PORT=10000` (və ya Render avtomatik təyin edər)
+6. Deploy edin
+
+**Render üçün Əlavə Qeyd:**
+- Render.com-da deploy edərkən `PORT` environment variable istifadə ediləcək
+- SQLite database avtomatik yaradılacaq
+- Uploads qovluğu avtomatik yaradılacaq
+- İlk deploy 2-3 dəqiqə çəkə bilər
 
 ## 🔐 Super Admin Girişi
 - **İstifadəçi adı**: ursamajor
